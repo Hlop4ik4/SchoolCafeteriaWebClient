@@ -143,34 +143,30 @@ let state = reactive({
     goods: []
 })
 
-onMounted(() => {
-    getAll();
-    getAllGoods();
+onMounted(async () => {
+    await getAll();
+    await getAllGoods();
 })
 
-function getAll() {
-    axios.get("http://localhost:5155/TechnologicalMaps/Get")
-        .then(res => {
-            state.data = res.data;
-        })
+async function getAll() {
+    let res = await axios.get("http://localhost:5155/TechnologicalMaps/Get");
+    state.data = res.data;
 }
 
-function getAllGoods() {
-    axios.get("http://localhost:5155/Goods/Get")
-        .then(res => {
-            state.goods = res.data;
-        })
+async function getAllGoods() {
+    let res = await axios.get("http://localhost:5155/Goods/Get");
+    state.goods = res.data;
 }
 
-function addNew() {
+async function addNew() {
     let data = state.currentItem;
-    axios.post("http://localhost:5155/TechnologicalMaps/Create", JSON.stringify(data), {
+    await axios.post("http://localhost:5155/TechnologicalMaps/Create", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
         }
     })
-        .then(res => console.log(res))
-    getAll();
+
+    await getAll();
 }
 
 function setStateForUpdate(item) {
@@ -182,24 +178,25 @@ function setStateForUpdate(item) {
     state.updateItem.techMapGoods = item.techMapGoods;
 }
 
-function updateThis() {
+async function updateThis() {
     let data = state.updateItem;
-    console.log(data)
-    axios.patch("http://localhost:5155/TechnologicalMaps/Update", JSON.stringify(data), {
+    await axios.patch("http://localhost:5155/TechnologicalMaps/Update", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
         }
     })
-    getAll();
+
+    await getAll();
 }
 
-function deleteThis(item) {
-    axios.post("http://localhost:5155/TechnologicalMaps/Delete", JSON.stringify(item), {
+async function deleteThis(item) {
+    await axios.post("http://localhost:5155/TechnologicalMaps/Delete", JSON.stringify(item), {
         headers: {
             "Content-Type": "application/json"
         }
     });
-    getAll();
+
+    await getAll();
 }
 </script>
 

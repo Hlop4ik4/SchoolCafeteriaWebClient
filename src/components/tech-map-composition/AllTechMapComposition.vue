@@ -199,34 +199,30 @@ let state = reactive({
     techMaps: []
 })
 
-onMounted(() => {
-    getAll();
-    getAllTechMaps();
+onMounted(async () => {
+    await getAll();
+    await getAllTechMaps();
 })
 
-function getAll() {
-    axios.get("http://localhost:5155/TechMapComposition/Get")
-        .then(res => {
-            state.data = res.data;
-        })
+async function getAll() {
+    let res = await axios.get("http://localhost:5155/TechMapComposition/Get");
+    state.data = res.data;
 }
 
-function getAllTechMaps() {
-    axios.get("http://localhost:5155/TechnologicalMaps/Get")
-        .then(res => {
-            state.techMaps = res.data;
-        })
+async function getAllTechMaps() {
+    let res = await axios.get("http://localhost:5155/TechnologicalMaps/Get");
+    state.techMaps = res.data;
 }
 
-function addNew() {
+async function addNew() {
     let data = state.currentItem;
-    axios.post("http://localhost:5155/TechMapComposition/Create", JSON.stringify(data), {
+    await axios.post("http://localhost:5155/TechMapComposition/Create", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
         }
     })
-        .then(res => console.log(res))
-    getAll();
+
+    await getAll();
 }
 
 function setStateForUpdate(item) {
@@ -245,24 +241,25 @@ function setStateForUpdate(item) {
     state.updateItem.fe = item.fe;
 }
 
-function updateThis() {
+async function updateThis() {
     let data = state.updateItem;
-    console.log(data)
-    axios.patch("http://localhost:5155/TechMapComposition/Update", JSON.stringify(data), {
+    await axios.patch("http://localhost:5155/TechMapComposition/Update", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
         }
     })
-    getAll();
+
+    await getAll();
 }
 
-function deleteThis(item) {
-    axios.post("http://localhost:5155/TechMapComposition/Delete", JSON.stringify(item), {
+async function deleteThis(item) {
+    await axios.post("http://localhost:5155/TechMapComposition/Delete", JSON.stringify(item), {
         headers: {
             "Content-Type": "application/json"
         }
     });
-    getAll();
+
+    await getAll();
 }
 </script>
 
