@@ -12,14 +12,14 @@
                 </template>
                 <template v-slot:default="{ isActive }">
                     <v-card title="Новая сущность">
-                        <v-text-field label="DishName" v-model="state.currentItem.dishName"></v-text-field>
-                        <v-text-field label="RecipeNumber" v-model="state.currentItem.recipeNumber"></v-text-field>
-                        <v-text-field label="CookingTechnology" v-model="state.currentItem.cookingTechnology"></v-text-field>
-                        <v-text-field label="Description" v-model="state.currentItem.description"></v-text-field>
+                        <v-text-field label="DishName" v-model="state.techMapCurrentItem.dishName"></v-text-field>
+                        <v-text-field label="RecipeNumber" v-model="state.techMapCurrentItem.recipeNumber"></v-text-field>
+                        <v-text-field label="CookingTechnology" v-model="state.techMapCurrentItem.cookingTechnology"></v-text-field>
+                        <v-text-field label="Description" v-model="state.techMapCurrentItem.description"></v-text-field>
                         <v-select
                             item-title="name"
                             item-value="id"
-                            v-model="state.currentItem.techMapGoods"
+                            v-model="state.techMapCurrentItem.techMapGoods"
                             chips
                             multiple
                             :items="state.goods"
@@ -109,13 +109,48 @@
                         <v-btn
                             text="Удалить"
                             color="pink"
+                            class="mr-1"
                             @click="deleteThis(item)"
+                        ></v-btn>
+                        <v-btn
+                            text="Состав"
+                            color="blue"
+                            @click="showTechMapCompositionDialog(item)"
                         ></v-btn>
                     </div>
                 </td>
             </tr>
             </tbody>
         </v-table>
+        <v-dialog 
+            v-model="state.isTechMapCompositionModalActive"
+            max-width="720"
+        >
+            <template v-slot:default="{ isActive }">
+                <v-card title="Новая сущность">
+                    <v-text-field label="Название блюда" v-model="state.techMapCompositionCurrentItem.techMapDishName" disabled></v-text-field>
+                    <v-text-field label="Протеин" v-model="state.techMapCompositionCurrentItem.protein" disabled></v-text-field>
+                    <v-text-field label="fat" v-model="state.techMapCompositionCurrentItem.fat" disabled></v-text-field>
+                    <v-text-field label="Carb" v-model="state.techMapCompositionCurrentItem.carb" disabled></v-text-field>
+                    <v-text-field label="b1" v-model="state.techMapCompositionCurrentItem.b1" disabled></v-text-field>
+                    <v-text-field label="c" v-model="state.techMapCompositionCurrentItem.c" disabled></v-text-field>
+                    <v-text-field label="a" v-model="state.techMapCompositionCurrentItem.a" disabled></v-text-field>
+                    <v-text-field label="e" v-model="state.techMapCompositionCurrentItem.e" disabled></v-text-field>
+                    <v-text-field label="ca" v-model="state.techMapCompositionCurrentItem.ca" disabled></v-text-field>
+                    <v-text-field label="p" v-model="state.techMapCompositionCurrentItem.p" disabled></v-text-field>
+                    <v-text-field label="mg" v-model="state.techMapCompositionCurrentItem.mg" disabled></v-text-field>
+                    <v-text-field label="fe" v-model="state.techMapCompositionCurrentItem.fe" disabled></v-text-field>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            text="Закрыть"
+                            @click="isActive.value = false"
+                        ></v-btn>
+                    </v-card-actions>
+                </v-card>
+            </template>
+        </v-dialog>
     </v-card>
 </template>
 
@@ -125,14 +160,14 @@ import axios from "axios";
 
 let state = reactive({
     data: [],
-    currentItem: {
+    techMapCurrentItem: {
         dishName: "",
         recipeNumber: "",
         cookingTechnology: "",
         description: "",
         techMapGoods: []
     },
-    updateItem: {
+    techMapUpdateItem: {
         id: "",
         dishName: "",
         recipeNumber: "",
@@ -140,6 +175,21 @@ let state = reactive({
         description: "",
         techMapGoods: []
     },
+    techMapCompositionCurrentItem: {
+        techMapDishName: "",
+        protein: "",
+        fat: "",
+        carb: "",
+        b1: "",
+        c: "",
+        a: "",
+        e: "",
+        ca: "",
+        p: "",
+        mg: "",
+        fe: "",
+    },
+    isTechMapCompositionModalActive: false,
     goods: []
 })
 
@@ -159,7 +209,7 @@ async function getAllGoods() {
 }
 
 async function addNew() {
-    let data = state.currentItem;
+    let data = state.techMapCurrentItem;
     await axios.post("http://localhost:5155/TechnologicalMaps/Create", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
@@ -197,6 +247,25 @@ async function deleteThis(item) {
     });
 
     await getAll();
+}
+
+async function showTechMapCompositionDialog(techMapItem) {
+    let res = await axios.get("http://localhost:5155/TechMapComposition/Get/" + techMapItem.id);
+
+    state.techMapCompositionCurrentItem.techMapDishName = techMapItem.dishName;
+    state.techMapCompositionCurrentItem.protein = res.data.protein;
+    state.techMapCompositionCurrentItem.fat = res.data.fat;
+    state.techMapCompositionCurrentItem.carb = res.data.carb;
+    state.techMapCompositionCurrentItem.b1 = res.data.b1;
+    state.techMapCompositionCurrentItem.c = res.data.c;
+    state.techMapCompositionCurrentItem.a = res.data.a;
+    state.techMapCompositionCurrentItem.e = res.data.e;
+    state.techMapCompositionCurrentItem.ca = res.data.ca;
+    state.techMapCompositionCurrentItem.p = res.data.p;
+    state.techMapCompositionCurrentItem.mg = res.data.mg;
+    state.techMapCompositionCurrentItem.fe = res.data.fe;
+
+    state.isTechMapCompositionModalActive = true;
 }
 </script>
 

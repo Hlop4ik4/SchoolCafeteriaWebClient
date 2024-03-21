@@ -12,16 +12,16 @@
                 </template>
                 <template v-slot:default="{ isActive }">
                     <v-card title="Новая сущность">
-                        <v-text-field label="Имя" v-model="state.currentItem.name"></v-text-field>
-                        <v-text-field label="Масса брутто" v-model="state.currentItem.bruttoMass"></v-text-field>
-                        <v-text-field label="Масса нетто" v-model="state.currentItem.nettoMass"></v-text-field>
-                        <v-text-field label="Пометить для удаления" v-model="state.currentItem.markToDelete"></v-text-field>
+                        <v-text-field label="Имя" v-model="state.goodsCurrentItem.name"></v-text-field>
+                        <v-text-field label="Масса брутто" v-model="state.goodsCurrentItem.bruttoMass"></v-text-field>
+                        <v-text-field label="Масса нетто" v-model="state.goodsCurrentItem.nettoMass"></v-text-field>
+                        <v-text-field label="Пометить для удаления" v-model="state.goodsCurrentItem.markToDelete"></v-text-field>
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn
                                 text="Добавить"
-                                @click="addNew(); isActive.value = false"
+                                @click="addNewGoods(); isActive.value = false"
                             ></v-btn>
                             <v-btn
                                 text="Закрыть"
@@ -70,10 +70,10 @@
                             </template>
                             <template v-slot:default="{ isActive }">
                                 <v-card title="Новая сущность">
-                                    <v-text-field label="Имя" v-model="state.updateItem.name"></v-text-field>
-                                    <v-text-field label="Масса брутто" v-model="state.updateItem.bruttoMass"></v-text-field>
-                                    <v-text-field label="Масса нетто" v-model="state.updateItem.nettoMass"></v-text-field>
-                                    <v-text-field label="Пометить для удаления" v-model="state.updateItem.markToDelete"></v-text-field>
+                                    <v-text-field label="Имя" v-model="state.goodsUpdateItem.name"></v-text-field>
+                                    <v-text-field label="Масса брутто" v-model="state.goodsUpdateItem.bruttoMass"></v-text-field>
+                                    <v-text-field label="Масса нетто" v-model="state.goodsUpdateItem.nettoMass"></v-text-field>
+                                    <v-text-field label="Пометить для удаления" v-model="state.goodsUpdateItem.markToDelete"></v-text-field>
 
                                     <v-card-actions>
                                         <v-spacer></v-spacer>
@@ -94,13 +94,52 @@
                             v-if="item.markToDelete == 'True'"
                             text="Удалить"
                             color="pink"
+                            class="mr-1"
                             @click="deleteThis(item)"
+                        ></v-btn>
+                        <v-btn
+                            text="Состав"
+                            color="blue"
+                            @click="showGoodCompositionDialog(item)"
                         ></v-btn>
                     </div>
                 </td>
             </tr>
             </tbody>
         </v-table>
+        <v-dialog 
+            v-model="state.isGoodsCompositionModalActive"
+            max-width="720"
+        >
+            <template v-slot:default="{ isActive }">
+                <v-card title="Новая сущность">
+                    <v-text-field label="Продукт" v-model="state.goodsCompositionCurrentItem.goodsName" disabled></v-text-field>
+                    <v-text-field label="Протеин" v-model="state.goodsCompositionCurrentItem.protein"></v-text-field>
+                    <v-text-field label="fat" v-model="state.goodsCompositionCurrentItem.fat"></v-text-field>
+                    <v-text-field label="Carb" v-model="state.goodsCompositionCurrentItem.carb"></v-text-field>
+                    <v-text-field label="b1" v-model="state.goodsCompositionCurrentItem.b1"></v-text-field>
+                    <v-text-field label="c" v-model="state.goodsCompositionCurrentItem.c"></v-text-field>
+                    <v-text-field label="a" v-model="state.goodsCompositionCurrentItem.a"></v-text-field>
+                    <v-text-field label="e" v-model="state.goodsCompositionCurrentItem.e"></v-text-field>
+                    <v-text-field label="ca" v-model="state.goodsCompositionCurrentItem.ca"></v-text-field>
+                    <v-text-field label="p" v-model="state.goodsCompositionCurrentItem.p"></v-text-field>
+                    <v-text-field label="mg" v-model="state.goodsCompositionCurrentItem.mg"></v-text-field>
+                    <v-text-field label="fe" v-model="state.goodsCompositionCurrentItem.fe"></v-text-field>
+
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            :text="state.createOrUpdateGoodsCompositionBtnText"
+                            @click="CreateOrUpdateGoodsComposition(); isActive.value = false"
+                        ></v-btn>
+                        <v-btn
+                            text="Закрыть"
+                            @click="isActive.value = false"
+                        ></v-btn>
+                    </v-card-actions>
+                </v-card>
+            </template>
+        </v-dialog>
     </v-card>
 </template>
 
@@ -110,19 +149,37 @@ import axios from "axios";
 
 let state = reactive({
     data: [],
-    currentItem: {
+    goodsCurrentItem: {
         name: "",
         bruttoMass: "",
         nettoMass: "",
         markToDelete: ""
     },
-    updateItem: {
+    goodsUpdateItem: {
         id: "",
         name: "",
         bruttoMass: "",
         nettoMass: "",
         markToDelete: ""
-    }
+    },
+    goodsCompositionCurrentItem: {
+        goodsId: "",
+        goodsName: "",
+        protein: "",
+        fat: "",
+        carb: "",
+        b1: "",
+        c: "",
+        a: "",
+        e: "",
+        ca: "",
+        p: "",
+        mg: "",
+        fe: ""
+    },
+    isGoodsCompositionModalActive: false,
+    createOrUpdateGoodsCompositionBtnText: "Добавить",
+    isGoodsCompositionToUpdate: false
 })
 
 onMounted(async () => {
@@ -134,8 +191,8 @@ async function getAll() {
     state.data = res.data;
 }
 
-async function addNew() {
-    let data = state.currentItem;
+async function addNewGoods() {
+    let data = state.goodsCurrentItem;
     await axios.post("http://localhost:5155/Goods/Create", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
@@ -146,16 +203,33 @@ async function addNew() {
     
 }
 
+async function CreateOrUpdateGoodsComposition() {
+    let data = state.goodsCompositionCurrentItem;
+    if (state.isGoodsCompositionToUpdate) {
+        await axios.patch("http://localhost:5155/GoodsComposition/Update", JSON.stringify(data), {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    } else {
+        await axios.post("http://localhost:5155/GoodsComposition/Create", JSON.stringify(data), {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+    }
+}
+
 function setStateForUpdate(item) {
-    state.updateItem.id = item.id;
-    state.updateItem.bruttoMass = item.bruttoMass;
-    state.updateItem.nettoMass = item.nettoMass;
-    state.updateItem.name = item.name;
-    state.updateItem.markToDelete = item.markToDelete;
+    state.goodsUpdateItem.id = item.id;
+    state.goodsUpdateItem.bruttoMass = item.bruttoMass;
+    state.goodsUpdateItem.nettoMass = item.nettoMass;
+    state.goodsUpdateItem.name = item.name;
+    state.goodsUpdateItem.markToDelete = item.markToDelete;
 }
 
 async function updateThis() {
-    let data = state.updateItem;
+    let data = state.goodsUpdateItem;
     console.log(data)
     await axios.patch("http://localhost:5155/Goods/Update", JSON.stringify(data), {
         headers: {
@@ -174,6 +248,50 @@ async function deleteThis(item) {
     });
 
     await getAll();
+}
+
+async function showGoodCompositionDialog(goodsItem) {
+    let res = await axios.get("http://localhost:5155/GoodsComposition/Get/" + goodsItem.id);
+
+    if (res.data != '') {
+        state.goodsCompositionCurrentItem.id = res.data.id;
+        state.goodsCompositionCurrentItem.goodsId = res.data.goodsId;
+        state.goodsCompositionCurrentItem.goodsName = goodsItem.name;
+        state.goodsCompositionCurrentItem.protein = res.data.protein;
+        state.goodsCompositionCurrentItem.fat = res.data.fat;
+        state.goodsCompositionCurrentItem.carb = res.data.carb;
+        state.goodsCompositionCurrentItem.b1 = res.data.b1;
+        state.goodsCompositionCurrentItem.c = res.data.c;
+        state.goodsCompositionCurrentItem.a = res.data.a;
+        state.goodsCompositionCurrentItem.e = res.data.e;
+        state.goodsCompositionCurrentItem.ca = res.data.ca;
+        state.goodsCompositionCurrentItem.p = res.data.p;
+        state.goodsCompositionCurrentItem.mg = res.data.mg;
+        state.goodsCompositionCurrentItem.fe = res.data.fe;
+
+        state.createOrUpdateGoodsCompositionBtnText = "Обновить";
+        state.isGoodsCompositionToUpdate = true;
+    } else {
+        state.goodsCompositionCurrentItem.id = "";
+        state.goodsCompositionCurrentItem.goodsId = goodsItem.id;
+        state.goodsCompositionCurrentItem.goodsName = goodsItem.name;
+        state.goodsCompositionCurrentItem.protein = "";
+        state.goodsCompositionCurrentItem.fat = "";
+        state.goodsCompositionCurrentItem.carb = "";
+        state.goodsCompositionCurrentItem.b1 = "";
+        state.goodsCompositionCurrentItem.c = "";
+        state.goodsCompositionCurrentItem.a = "";
+        state.goodsCompositionCurrentItem.e = "";
+        state.goodsCompositionCurrentItem.ca = "";
+        state.goodsCompositionCurrentItem.p = "";
+        state.goodsCompositionCurrentItem.mg = "";
+        state.goodsCompositionCurrentItem.fe = "";
+
+        state.createOrUpdateGoodsCompositionBtnText = "Добавить";
+        state.isGoodsCompositionToUpdate = false;
+    }
+
+    state.isGoodsCompositionModalActive = true;
 }
 </script>
 
