@@ -201,6 +201,12 @@ async function addNewGoods() {
 
     await getAll();
     
+    state.goodsCurrentItem = {
+        name: "",
+        bruttoMass: "",
+        nettoMass: "",
+        markToDelete: ""
+    }
 }
 
 async function CreateOrUpdateGoodsComposition() {

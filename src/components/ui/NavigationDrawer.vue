@@ -3,6 +3,8 @@
         <v-list nav>
             <v-list-item to="/goods" title="Продукты"></v-list-item>
             <v-list-item to="/tech-map" title="Технологические карты"></v-list-item>
+            <v-list-item to="/dish" title="Блюда"></v-list-item>
+            <v-list-item to="/order" title="Заказы"></v-list-item>
         </v-list>
     </v-navigation-drawer>
 </template>

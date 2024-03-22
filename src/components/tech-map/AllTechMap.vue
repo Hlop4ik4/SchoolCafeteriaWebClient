@@ -217,6 +217,14 @@ async function addNew() {
     })
 
     await getAll();
+
+    state.techMapCurrentItem = {
+        dishName: "",
+        recipeNumber: "",
+        cookingTechnology: "",
+        description: "",
+        techMapGoods: []
+    }
 }
 
 function setStateForUpdate(item) {
