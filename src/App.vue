@@ -4,10 +4,8 @@
             <template v-slot:prepend>
                 <v-app-bar-nav-icon icon="$vuetify"></v-app-bar-nav-icon>
             </template>
-            <v-app-bar-title>School Cafeteria</v-app-bar-title>
+            <v-app-bar-title>Школьная столовая</v-app-bar-title>
             <v-spacer></v-spacer>
-            <router-link to="/register">Регистрация</router-link>
-            <router-link to="/auth">Авторизация</router-link>
         </v-app-bar>
         <navigation-drawer></navigation-drawer>
         <v-main>

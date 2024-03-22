@@ -12,10 +12,10 @@
                 </template>
                 <template v-slot:default="{ isActive }">
                     <v-card title="Новая сущность">
-                        <v-text-field label="DishName" v-model="state.techMapCurrentItem.dishName"></v-text-field>
-                        <v-text-field label="RecipeNumber" v-model="state.techMapCurrentItem.recipeNumber"></v-text-field>
-                        <v-text-field label="CookingTechnology" v-model="state.techMapCurrentItem.cookingTechnology"></v-text-field>
-                        <v-text-field label="Description" v-model="state.techMapCurrentItem.description"></v-text-field>
+                        <v-text-field label="Название блюда" v-model="state.techMapCurrentItem.dishName"></v-text-field>
+                        <v-text-field label="Номер рецепта" v-model="state.techMapCurrentItem.recipeNumber"></v-text-field>
+                        <v-text-field label="Технология приготовления" v-model="state.techMapCurrentItem.cookingTechnology"></v-text-field>
+                        <v-text-field label="Описание" v-model="state.techMapCurrentItem.description"></v-text-field>
                         <v-select
                             item-title="name"
                             item-value="id"
@@ -44,16 +44,16 @@
             <thead>
             <tr>
                 <th class="text-left">
-                    DishName
+                    Название блюда
                 </th>
                 <th class="text-left">
-                    RecipeNumber
+                    Номер рецепта
                 </th>
                 <th class="text-left">
-                    CookingTechnology
+                    Технология приготовления
                 </th>
                 <th class="text-left">
-                    Description
+                    Описание
                 </th>
                 <th></th>
             </tr>
@@ -78,14 +78,14 @@
                             </template>
                             <template v-slot:default="{ isActive }">
                                 <v-card title="Новая сущность">
-                                    <v-text-field label="DishName" v-model="state.updateItem.dishName"></v-text-field>
-                                    <v-text-field label="RecipeNumber" v-model="state.updateItem.recipeNumber"></v-text-field>
-                                    <v-text-field label="CookingTechnology" v-model="state.updateItem.cookingTechnology"></v-text-field>
-                                    <v-text-field label="Description" v-model="state.updateItem.description"></v-text-field>
+                                    <v-text-field label="Название блюда" v-model="state.techMapUpdateItem.dishName"></v-text-field>
+                                    <v-text-field label="Номер рецепта" v-model="state.techMapUpdateItem.recipeNumber"></v-text-field>
+                                    <v-text-field label="Технология приготовления" v-model="state.techMapUpdateItem.cookingTechnology"></v-text-field>
+                                    <v-text-field label="Описание" v-model="state.techMapUpdateItem.description"></v-text-field>
                                     <v-select
                                         item-title="name"
                                         item-value="id"
-                                        v-model="state.updateItem.techMapGoods"
+                                        v-model="state.techMapUpdateItem.techMapGoods"
                                         chips
                                         multiple
                                         :items="state.goods"
@@ -228,16 +228,16 @@ async function addNew() {
 }
 
 function setStateForUpdate(item) {
-    state.updateItem.id = item.id;
-    state.updateItem.dishName = item.dishName;
-    state.updateItem.recipeNumber = item.recipeNumber;
-    state.updateItem.cookingTechnology = item.cookingTechnology;
-    state.updateItem.description = item.description;
-    state.updateItem.techMapGoods = item.techMapGoods;
+    state.techMapUpdateItem.id = item.id;
+    state.techMapUpdateItem.dishName = item.dishName;
+    state.techMapUpdateItem.recipeNumber = item.recipeNumber;
+    state.techMapUpdateItem.cookingTechnology = item.cookingTechnology;
+    state.techMapUpdateItem.description = item.description;
+    state.techMapUpdateItem.techMapGoods = item.techMapGoods;
 }
 
 async function updateThis() {
-    let data = state.updateItem;
+    let data = state.techMapUpdateItem;
     await axios.patch("http://localhost:5155/TechnologicalMaps/Update", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"
