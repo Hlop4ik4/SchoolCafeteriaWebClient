@@ -13,9 +13,9 @@
                 <template v-slot:default="{ isActive }">
                     <v-card title="Новая сущность">
                         <v-text-field label="Имя" v-model="state.goodsCurrentItem.name"></v-text-field>
-                        <v-text-field label="Масса брутто" v-model="state.goodsCurrentItem.bruttoMass"></v-text-field>
-                        <v-text-field label="Масса нетто" v-model="state.goodsCurrentItem.nettoMass"></v-text-field>
-                        <v-text-field label="Пометить для удаления" v-model="state.goodsCurrentItem.markToDelete"></v-text-field>
+                        <v-text-field label="Масса брутто" type="number" v-model="state.goodsCurrentItem.bruttoMass"></v-text-field>
+                        <v-text-field label="Масса нетто" type="number" v-model="state.goodsCurrentItem.nettoMass"></v-text-field>
+                        <v-switch label="Пометить для удаления" v-model="state.goodsCurrentItem.markToDelete" color="red" style="margin-left: 10px;"></v-switch>
 
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -45,7 +45,7 @@
                     Масса (нетто)
                 </th>
                 <th class="text-left">
-                    MarkToDelete
+                    Пометка для удаления
                 </th>
                 <th></th>
             </tr>
@@ -55,7 +55,7 @@
                 <td>{{item.name}}</td>
                 <td>{{item.bruttoMass}}</td>
                 <td>{{item.nettoMass}}</td>
-                <td>{{item.markToDelete}}</td>
+                <td>{{ item.markToDelete ? 'Да' : 'Нет' }}</td>
                 <td>
                     <div class="d-flex flex-row">
                         <v-dialog max-width="720">
@@ -71,9 +71,9 @@
                             <template v-slot:default="{ isActive }">
                                 <v-card title="Новая сущность">
                                     <v-text-field label="Имя" v-model="state.goodsUpdateItem.name"></v-text-field>
-                                    <v-text-field label="Масса брутто" v-model="state.goodsUpdateItem.bruttoMass"></v-text-field>
-                                    <v-text-field label="Масса нетто" v-model="state.goodsUpdateItem.nettoMass"></v-text-field>
-                                    <v-text-field label="Пометить для удаления" v-model="state.goodsUpdateItem.markToDelete"></v-text-field>
+                                    <v-text-field label="Масса брутто" type="number" v-model="state.goodsUpdateItem.bruttoMass"></v-text-field>
+                                    <v-text-field label="Масса нетто" type="number" v-model="state.goodsUpdateItem.nettoMass"></v-text-field>
+                                    <v-switch label="Пометить для удаления" v-model="state.goodsUpdateItem.markToDelete" color="red" style="margin-left: 10px;"></v-switch>
 
                                     <v-card-actions>
                                         <v-spacer></v-spacer>
@@ -91,7 +91,7 @@
                             </template>
                         </v-dialog>
                         <v-btn
-                            v-if="item.markToDelete == 'True'"
+                            v-if="item.markToDelete == true"
                             text="Удалить"
                             color="pink"
                             class="mr-1"
@@ -153,7 +153,7 @@ let state = reactive({
         name: "",
         bruttoMass: "",
         nettoMass: "",
-        markToDelete: ""
+        markToDelete: false
     },
     goodsUpdateItem: {
         id: "",
@@ -201,6 +201,12 @@ async function addNewGoods() {
 
     await getAll();
     
+    state.goodsCurrentItem = {
+        name: "",
+        bruttoMass: "",
+        nettoMass: "",
+        markToDelete: false
+    }
 }
 
 async function CreateOrUpdateGoodsComposition() {
@@ -230,7 +236,6 @@ function setStateForUpdate(item) {
 
 async function updateThis() {
     let data = state.goodsUpdateItem;
-    console.log(data)
     await axios.patch("http://localhost:5155/Goods/Update", JSON.stringify(data), {
         headers: {
             "Content-Type": "application/json"

@@ -223,6 +223,21 @@ async function addNew() {
     })
 
     await getAll();
+
+    state.currentItem = {
+        goodsId: "",
+        protein: "",
+        fat: "",
+        carb: "",
+        b1: "",
+        c: "",
+        a: "",
+        e: "",
+        ca: "",
+        p: "",
+        mg: "",
+        fe: "",
+    }
 }
 
 function setStateForUpdate(item) {
