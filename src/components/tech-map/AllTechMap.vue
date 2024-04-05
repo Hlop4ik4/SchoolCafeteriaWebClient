@@ -119,6 +119,11 @@
                             color="blue"
                             @click="showTechMapCompositionDialog(item)"
                         ></v-btn>
+                        <v-btn
+                            text="Скачать файл"
+                            @click="downloadFile(item)"
+                        >
+                        </v-btn>
                     </div>
                 </td>
             </tr>
@@ -276,6 +281,15 @@ async function showTechMapCompositionDialog(techMapItem) {
     state.techMapCompositionCurrentItem.fe = res.data.fe;
 
     state.isTechMapCompositionModalActive = true;
+}
+
+async function downloadFile(item) {
+    let res = await axios.get("http://localhost:5155/CreateDocument/" + item.id, { responseType: 'blob' });
+
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(res.data);
+    a.download = "Технологическая карта №" + item.id + ".docx";
+    a.click();
 }
 </script>
 
